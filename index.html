@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para mi niña hermosa 💖</title>
+
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/833/833472.png" type="image/png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Base para móvil */
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+        body{
+            height:100vh;
+            width:100vw;
+            overflow:hidden;
+            font-family:'Poppins',sans-serif;
+            background:linear-gradient(135deg,#140018,#2a0033,#3d003d,#1a001f);
+            color:white;
+        }
+
+        .screen{
+            position:absolute;
+            width:100%;
+            height:100%;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            transition: opacity 1s;
+            padding: 20px;
+        }
+
+        h1{
+            font-family:'Playfair Display',serif;
+            font-size:1.8rem;
+            text-align:center;
+            text-shadow:0 5px 20px rgba(255,0,120,0.6);
+            margin-bottom:20px;
+        }
+
+        /* Botones grandes para dedos */
+        button{
+            padding:18px 40px;
+            font-size:1.1rem;
+            border:none;
+            border-radius:50px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+            touch-action: manipulation;
+            z-index: 10;
+        }
+
+        .primary{
+            background:#ff2e88;
+            color:white;
+            box-shadow:0 10px 25px rgba(255,46,136,.5);
+        }
+
+        .secondary{
+            background:white;
+            color:#ff2e88;
+        }
+
+        /* Diseño Final: Rejilla para evitar que las fotos tapen el texto */
+        .final-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto auto;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            align-items: center;
+        }
+
+        .text-container {
+            grid-column: span 2;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 46, 136, 0.3);
+            text-align: center;
+            z-index: 5;
+        }
+
+        .text-container h1 { font-size: 1.2rem; margin-bottom: 10px; }
+        .text-container p { font-size: 0.8rem; color: #00ffcc; font-weight: 600; }
+
+        /* Fotos con movimiento de balanceo */
+        .photo {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            animation: swing 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes swing{ 
+            from{transform:rotate(-4deg);} 
+            to{transform:rotate(4deg);} 
+        }
+
+        /* Corazones e interacción */
+        .heart{
+            position:absolute;
+            width:15px;
+            height:15px;
+            transform:rotate(45deg);
+            pointer-events: none;
+            z-index: 100;
+        }
+        .heart:before, .heart:after{
+            content:""; position:absolute; width:100%; height:100%;
+            background:inherit; border-radius:50%;
+        }
+        .heart:before{top:-50%; left:0;}
+        .heart:after{left:-50%; top:0;}
+
+        .floating-msg {
+            position: fixed;
+            top: 15%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #00ffcc;
+            font-weight: bold;
+            font-size: 1.4rem;
+            text-shadow: 0 0 10px rgba(0,0,0,1);
+            animation: fadeOut 2s forwards;
+            z-index: 1000;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-40px); }
+        }
+
+        .bg-heart {
+            position: absolute;
+            color: rgba(255, 46, 136, 0.3);
+            font-size: 20px;
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(105vh) rotate(0deg); opacity: 1; }
+            to { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="introScreen" class="screen">
+    <img src="intro.gif" style="width:180px; border-radius:20px; margin-bottom:20px;">
+    <h1>¿Lista para tu regalo? 🎁</h1>
+    <button onclick="startApp()" class="primary">¡Sí, lista! ✨</button>
+</div>
+
+<div id="questionScreen" class="screen" style="display:none; opacity:0;">
+    <h1>¿Quieres ser mi Valentine? 💘</h1>
+    <div style="display:flex; flex-direction:column; gap:20px; width:100%; align-items:center;">
+        <button id="yesBtn" class="primary" onclick="goToFinal()">¡SÍ! 😍</button>
+        <button id="noBtn" class="secondary" style="min-width:100px;">No 💔</button>
+    </div>
+</div>
+
+<div id="finalScreen" class="screen" style="display:none; opacity:0;">
+    <div class="final-layout">
+        <img src="img1.jpg" class="photo" style="animation-delay:0s" onclick="touchPhoto(event, '¡Gracias por existir! 💖')">
+        <img src="img2.jpg" class="photo" style="animation-delay:0.5s" onclick="touchPhoto(event, '¡Eres la más prejioja! 😍')">
+        
+        <div class="text-container">
+            <h1>Para mi niña linda... 🌸</h1>
+            <p>Gracias por elegirme. Sé que hoy no estamos juntos, pero te llevo en mi corazón. ¡Te quiero muchito!</p>
+            <p style="margin-top:10px; font-size:0.7rem;">(Toca las fotitos...)</p>
+        </div>
+
+        <img src="img3.jpg" class="photo" style="animation-delay:1s" onclick="touchPhoto(event, '¡Te quiero mucho! ♾️')">
+        <img src="img4.jpg" class="photo" style="animation-delay:1.5s" onclick="touchPhoto(event, '¡Chocolatito pronto! 🍫')">
+    </div>
+</div>
+
+<audio id="music" src="cancion.mp3" loop></audio>
+
+<script>
+    const intro = document.getElementById('introScreen');
+    const quest = document.getElementById('questionScreen');
+    const final = document.getElementById('finalScreen');
+    const music = document.getElementById('music');
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+
+    let clicksNo = 0;
+    let scaleYes = 1;
+
+    // Iniciar app y música (necesita interacción del usuario en móvil)
+    function startApp() {
+        music.play();
+        intro.style.opacity = '0';
+        setTimeout(() => {
+            intro.style.display = 'none';
+            quest.style.display = 'flex';
+            setTimeout(() => quest.style.opacity = '1', 50);
+        }, 1000);
+    }
+
+    // El botón NO se escapa al tocarlo (especial para móvil)
+    noBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        clicksNo++;
+        scaleYes += 0.2;
+        yesBtn.style.transform = `scale(${scaleYes})`;
+        
+        const maxX = window.innerWidth - 120;
+        const maxY = window.innerHeight - 80;
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = Math.random() * maxX + 'px';
+        noBtn.style.top = Math.random() * maxY + 'px';
+        
+        if(clicksNo > 6) noBtn.style.display = 'none';
+    });
+
+    function goToFinal() {
+        quest.style.opacity = '0';
+        setTimeout(() => {
+            quest.style.display = 'none';
+            final.style.display = 'flex';
+            setTimeout(() => final.style.opacity = '1', 50);
+        }, 1000);
+    }
+
+    function touchPhoto(e, txt) {
+        // Crear mensaje flotante
+        const msg = document.createElement('div');
+        msg.className = 'floating-msg';
+        msg.innerText = txt;
+        document.body.appendChild(msg);
+        setTimeout(() => msg.remove(), 2000);
+
+        // Explosión de corazones de colores
+        const colors = ['#00e5ff', '#26ffad', '#00ff88', '#0099ff'];
+        const touch = e.touches[0];
+        for(let i=0; i<12; i++) {
+            createHeart(touch.clientX, touch.clientY, colors[Math.floor(Math.random()*colors.length)]);
+        }
+    }
+
+    function createHeart(x, y, color) {
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.style.background = color;
+        h.style.left = x + 'px';
+        h.style.top = y + 'px';
+        
+        const dX = (Math.random() - 0.5) * 250;
+        const dY = (Math.random() - 0.5) * 250;
+
+        document.body.appendChild(h);
+
+        h.animate([
+            { transform: 'translate(0,0) rotate(45deg) scale(1)', opacity: 1 },
+            { transform: `translate(${dX}px, ${dY}px) rotate(405deg) scale(0)`, opacity: 0 }
+        ], { duration: 2000, easing: 'ease-out' });
+
+        setTimeout(() => h.remove(), 2000);
+    }
+
+    // Fondo de corazones flotantes
+    setInterval(() => {
+        const bh = document.createElement('div');
+        bh.className = 'bg-heart';
+        bh.innerHTML = '❤️';
+        bh.style.left = Math.random() * 100 + 'vw';
+        bh.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        document.body.appendChild(bh);
+        setTimeout(() => bh.remove(), 6000);
+    }, 500);
+</script>
+
+</body>
+</html>
